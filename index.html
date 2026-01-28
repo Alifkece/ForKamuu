@@ -81,6 +81,11 @@
 	.wrapper{position:fixed}.circ div{position:fixed;width:60px;height:60px;background-color:transparent;border:6px solid rgba(255,255,255,0.5);border-radius:50%}.circ div:nth-child(1){top:12%;left:42%;animation:animate 10s linear infinite}.circ div:nth-child(2){top:70%;left:50%;animation:animate 7s linear infinite}.circ div:nth-child(3){top:17%;left:6%;animation:animate 9s linear infinite}.circ div:nth-child(4){top:20%;left:60%;animation:animate 10s linear infinite}.circ div:nth-child(5){top:67%;left:10%;animation:animate 6s linear infinite}.circ div:nth-child(6){top:80%;left:70%;animation:animate 12s linear infinite}.circ div:nth-child(7){top:60%;left:80%;animation:animate 15s linear infinite}.circ div:nth-child(8){top:32%;left:25%;animation:animate 16s linear infinite}.circ div:nth-child(9){top:90%;left:25%;animation:animate 9s linear infinite}.circ div:nth-child(10){top:20%;left:80%;animation:animate 5s linear infinite}@keyframes animate{0%{transform:scale(0) translateY(0) rotate(0);opacity:.8}100%{transform:scale(1.3) translateY(-90px) rotate(360deg);opacity:0}}
 	
 	@media (max-width:600px){.kotak{width:80%;padding:1rem}#envelope{width:120px;height:82.5px;top:100px}.flap,.pocket{border-left-width:60px;border-right-width:60px;border-bottom-width:41.25px;border-top-width:41.25px}.letter{padding:10px}.message p{font-size:.9em}.papanGame{grid-template-columns:repeat(4,1fr);gap:1rem 0.2rem}.kartu{width:40px;height:40px}.belakangKartu{font-size:1.2rem}}
+.tombol button{
+  position: relative;
+  z-index: 99999;
+  pointer-events: auto;
+}
 </style>
 <body>
 
@@ -189,7 +194,6 @@ justify-content:center;
 	    <p id="pesanAkhir"></p>
 	    <p id="teksLucu"></p>
     </div>
-    <button style="display:none" onclick="balasWa()">Kirim ke Abangg!</button>
   </div>
   <div class="tombol">
     <button onclick="balasWa()">Balas</button>
@@ -237,8 +241,6 @@ let txtLucu = "....";
 let nomorWA = "";
   </script>
   <script>
-  	linkmp3.play();
-
     // Elemen Background
     const backgroundOverlay = document.querySelector('.background-overlay');
     const bgImageUrl = backgroundOverlay.getAttribute('data-src');
@@ -287,23 +289,26 @@ let nomorWA = "";
     }
 
     // Buka Envelope
-    function bukaEnvelope() {
-  linkmp3.play();
+function bukaEnvelope() {
+  const audio = document.getElementById("linkmp3");
+  audio.play().catch(()=>{});
+
   const envelope = document.getElementById('envelope');
   envelope.classList.remove('close');
   envelope.classList.add('open');
-  document.querySelector(".reset").style="transform:scale(0);opacity:0;transition:all .7s ease";
+
+  document.querySelector(".reset").style =
+    "transform:scale(0);opacity:0;transition:all .7s ease";
+
   setTimeout(() => {
-    document.querySelector("#envelope").style="transform:scale(0);opacity:0;transition:all .7s ease";
+    document.querySelector("#envelope").style =
+      "transform:scale(0);opacity:0;transition:all .7s ease";
+
     setTimeout(() => {
       pindahHal(3);
-      envelope.classList.remove('open');
-      envelope.classList.add('close');
     }, 500);
   }, 1200);
-} // Transition to hal2 after animation
-    }
-
+}
     // Halaman 2: Memory Game
     let kartuDibuka = [];
     let pasanganCocok = 0;
@@ -454,10 +459,13 @@ let nomorWA = "";
     }
 
 // Balas ke LINE
-function shareWa(){
-  if(!nomorWA) return;
-  const pesan = encodeURIComponent("Aku udah baca semuanya 🤍");
-  window.open("https://wa.me/" + nomorWA + "?text=" + pesan);
+function balasWa(){
+  const wa = nomorWA || new URLSearchParams(location.search).get("wa");
+  if(!wa){
+    alert("Nomor WhatsApp tidak ditemukan 😅");
+    return;
+  }
+  window.location.href = "https://wa.me/" + wa;
 }
   </script>
 
@@ -481,7 +489,8 @@ function applyTemplate(){
     `&wa=${encodeURIComponent(wa)}`;
 
   navigator.clipboard.writeText(link);
-  alert("Link berhasil dibuat 💖\nTinggal kirim ke dia.");
+alert("Link berhasil dibuat 💖\nTinggal kirim ke dia.");
+window.location.href = link;
 }
 </script>
 <script>
@@ -507,6 +516,9 @@ if(pTo && pCinta){
   if(pWa) nomorWA = pWa;
 
   document.getElementById("editorPanel").style.display = "none";
+
+  // 🔥 INI YANG KURANG
+  setTimeout(()=>pindahHal(1), 50);
 }
 </script>
 </body>
